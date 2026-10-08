@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>策略业绩报告</title>
+    <script src="https://assets.pyecharts.org/assets/v5/echarts.min.js"></script>
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>区间基础指标</h1>
+
+        <!-- 顶部概览卡片 -->
+        <div class="summary-cards">
+            <div class="card">
+                <p class="period-title">近一周</p>
+                <p class="date-range" id="summary-date-recent_week">--</p>
+                <div class="metric-row">
+                    <div class="metric-item">
+                        <p class="label">策略</p>
+                        <p class="value strategy-color" id="summary-strategy-recent_week">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">基准</p>
+                        <p class="value benchmark-color" id="summary-benchmark-recent_week">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">超额</p>
+                        <p class="value excess-color" id="summary-excess-recent_week">--</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <p class="period-title">近一月</p>
+                <p class="date-range" id="summary-date-recent_month">--</p>
+                <div class="metric-row">
+                    <div class="metric-item">
+                        <p class="label">策略</p>
+                        <p class="value strategy-color" id="summary-strategy-recent_month">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">基准</p>
+                        <p class="value benchmark-color" id="summary-benchmark-recent_month">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">超额</p>
+                        <p class="value excess-color" id="summary-excess-recent_month">--</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <p class="period-title">今年以来</p>
+                <p class="date-range" id="summary-date-ytd">--</p>
+                <div class="metric-row">
+                    <div class="metric-item">
+                        <p class="label">策略</p>
+                        <p class="value strategy-color" id="summary-strategy-ytd">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">基准</p>
+                        <p class="value benchmark-color" id="summary-benchmark-ytd">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">超额</p>
+                        <p class="value excess-color" id="summary-excess-ytd">--</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <p class="period-title">成立以来</p>
+                <p class="date-range" id="summary-date-interval">--</p>
+                <div class="metric-row">
+                    <div class="metric-item">
+                        <p class="label">策略</p>
+                        <p class="value strategy-color" id="summary-strategy-interval">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">基准</p>
+                        <p class="value benchmark-color" id="summary-benchmark-interval">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">超额</p>
+                        <p class="value excess-color" id="summary-excess-interval">--</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图表区域 -->
+        <div class="chart-section">
+            <div id="chart-container"></div>
+        </div>
+
+        <!-- 详细指标区域 -->
+        <div class="indicators-section">
+            <div class="indicators-header">
+                <h2>区间详细指标
+                    <span id="indicator-date-range" class="date-range-header"></span>
+                </h2>
+                <div class="period-buttons">
+                    <button class="period-btn" data-period="ytd">今年以来</button>
+                    <button class="period-btn" data-period="recent_year">近一年</button>
+                    <button class="period-btn active" data-period="interval">成立以来</button>
+                </div>
+            </div>
+
+            <!-- 有 benchmark：三列 -->
+            <div class="indicators-grid">
+                <div class="indicator-column excess-column benchmark-item">
+                    <h3>超额表现</h3>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额收益率</p>
+                        <p class="metric-value excess-color" id="ind-return-excess">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额年化收益率</p>
+                        <p class="metric-value excess-color" id="ind-annual-return-excess">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额年化波动率</p>
+                        <p class="metric-value excess-color" id="ind-annual-vol-excess">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额最大回撤</p>
+                        <p class="metric-value drawdown-color" id="ind-mdd-excess">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额夏普 (Sharpe)</p>
+                        <p class="metric-value" id="ind-sharpe-excess">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额卡玛 (Calmar)</p>
+                        <p class="metric-value" id="ind-karma-excess">--</p>
+                    </div>
+                </div>
+
+                <div class="indicator-column strategy-column">
+                    <h3>策略表现</h3>
+                    <div class="indicator-card">
+                        <p class="metric-title">区间收益率</p>
+                        <p class="metric-value strategy-color" id="ind-return-strategy">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">年化收益率</p>
+                        <p class="metric-value strategy-color" id="ind-annual-return-strategy">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">年化波动率</p>
+                        <p class="metric-value strategy-color" id="ind-annual-vol-strategy">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">最大回撤</p>
+                        <p class="metric-value drawdown-color" id="ind-mdd-strategy">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">夏普比率 (Sharpe)</p>
+                        <p class="metric-value" id="ind-sharpe-strategy">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">卡玛比率 (Calmar)</p>
+                        <p class="metric-value" id="ind-karma-strategy">--</p>
+                    </div>
+                </div>
+
+                <div class="indicator-column benchmark-column benchmark-item">
+                    <h3>基准表现</h3>
+                    <div class="indicator-card">
+                        <p class="metric-title">区间收益率</p>
+                        <p class="metric-value benchmark-color" id="ind-return-benchmark">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">年化收益率</p>
+                        <p class="metric-value benchmark-color" id="ind-annual-return-benchmark">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">年化波动率</p>
+                        <p class="metric-value benchmark-color" id="ind-annual-vol-benchmark">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">最大回撤</p>
+                        <p class="metric-value drawdown-color" id="ind-mdd-benchmark">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">夏普比率 (Sharpe)</p>
+                        <p class="metric-value" id="ind-sharpe-benchmark">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">卡玛比率 (Calmar)</p>
+                        <p class="metric-value" id="ind-karma-benchmark">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 无 benchmark：2×3 大卡片 -->
+            <div class="indicators-grid-solo" style="display: none;">
+                <div class="solo-metric-card">
+                    <p class="solo-label">区间收益率</p>
+                    <p class="solo-value strategy-color" id="solo-return">--</p>
+                </div>
+                <div class="solo-metric-card">
+                    <p class="solo-label">年化收益率</p>
+                    <p class="solo-value strategy-color" id="solo-annual-return">--</p>
+                </div>
+                <div class="solo-metric-card">
+                    <p class="solo-label">年化波动率</p>
+                    <p class="solo-value strategy-color" id="solo-annual-vol">--</p>
+                </div>
+                <div class="solo-metric-card">
+                    <p class="solo-label">最大回撤</p>
+                    <p class="solo-value drawdown-color" id="solo-mdd">--</p>
+                </div>
+                <div class="solo-metric-card">
+                    <p class="solo-label">夏普比率</p>
+                    <p class="solo-value" id="solo-sharpe">--</p>
+                </div>
+                <div class="solo-metric-card">
+                    <p class="solo-label">卡玛比率</p>
+                    <p class="solo-value" id="solo-karma">--</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- DATA_INJECTION -->
+    <script src="./assets/js/main.js"></script>
+</body>
+
+</html>

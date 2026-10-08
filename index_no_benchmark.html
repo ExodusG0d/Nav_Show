@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>策略业绩报告</title>
+    <script src="https://assets.pyecharts.org/assets/v5/echarts.min.js"></script>
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>乐水小波增强一号 业绩报告</h1>
+
+        <!-- 顶部概览卡片 -->
+        <div class="summary-cards">
+            <div class="card">
+                <p class="period-title">近一周</p>
+                <p class="date-range" id="summary-date-recent_week">--</p>
+                <div class="metric-row">
+                    <div class="metric-item">
+                        <p class="label">策略</p>
+                        <p class="value strategy-color" id="summary-strategy-recent_week">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">基准</p>
+                        <p class="value benchmark-color" id="summary-benchmark-recent_week">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">超额</p>
+                        <p class="value excess-color" id="summary-excess-recent_week">--</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <p class="period-title">近一月</p>
+                <p class="date-range" id="summary-date-recent_month">--</p>
+                <div class="metric-row">
+                    <div class="metric-item">
+                        <p class="label">策略</p>
+                        <p class="value strategy-color" id="summary-strategy-recent_month">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">基准</p>
+                        <p class="value benchmark-color" id="summary-benchmark-recent_month">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">超额</p>
+                        <p class="value excess-color" id="summary-excess-recent_month">--</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <p class="period-title">今年以来</p>
+                <p class="date-range" id="summary-date-ytd">--</p>
+                <div class="metric-row">
+                    <div class="metric-item">
+                        <p class="label">策略</p>
+                        <p class="value strategy-color" id="summary-strategy-ytd">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">基准</p>
+                        <p class="value benchmark-color" id="summary-benchmark-ytd">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">超额</p>
+                        <p class="value excess-color" id="summary-excess-ytd">--</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <p class="period-title">成立以来</p>
+                <p class="date-range" id="summary-date-interval">--</p>
+                <div class="metric-row">
+                    <div class="metric-item">
+                        <p class="label">策略</p>
+                        <p class="value strategy-color" id="summary-strategy-interval">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">基准</p>
+                        <p class="value benchmark-color" id="summary-benchmark-interval">--</p>
+                    </div>
+                    <div class="metric-item benchmark-item">
+                        <p class="label">超额</p>
+                        <p class="value excess-color" id="summary-excess-interval">--</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图表区域 -->
+        <div class="chart-section">
+            <div id="chart-container"></div>
+        </div>
+
+        <!-- 详细指标区域 -->
+        <div class="indicators-section">
+            <div class="indicators-header">
+                <h2>区间详细指标
+                    <span id="indicator-date-range" class="date-range-header"></span>
+                </h2>
+                <div class="period-buttons">
+                    <button class="period-btn" data-period="ytd">今年以来</button>
+                    <button class="period-btn" data-period="recent_year">近一年</button>
+                    <button class="period-btn active" data-period="interval">成立以来</button>
+                </div>
+            </div>
+
+            <!-- 有 benchmark：三列 -->
+            <div class="indicators-grid">
+                <div class="indicator-column excess-column benchmark-item">
+                    <h3>超额表现</h3>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额收益率</p>
+                        <p class="metric-value excess-color" id="ind-return-excess">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额年化收益率</p>
+                        <p class="metric-value excess-color" id="ind-annual-return-excess">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额年化波动率</p>
+                        <p class="metric-value excess-color" id="ind-annual-vol-excess">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额最大回撤</p>
+                        <p class="metric-value drawdown-color" id="ind-mdd-excess">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额夏普 (Sharpe)</p>
+                        <p class="metric-value" id="ind-sharpe-excess">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">超额卡玛 (Calmar)</p>
+                        <p class="metric-value" id="ind-karma-excess">--</p>
+                    </div>
+                </div>
+
+                <div class="indicator-column strategy-column">
+                    <h3>策略表现</h3>
+                    <div class="indicator-card">
+                        <p class="metric-title">区间收益率</p>
+                        <p class="metric-value strategy-color" id="ind-return-strategy">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">年化收益率</p>
+                        <p class="metric-value strategy-color" id="ind-annual-return-strategy">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">年化波动率</p>
+                        <p class="metric-value strategy-color" id="ind-annual-vol-strategy">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">最大回撤</p>
+                        <p class="metric-value drawdown-color" id="ind-mdd-strategy">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">夏普比率 (Sharpe)</p>
+                        <p class="metric-value" id="ind-sharpe-strategy">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">卡玛比率 (Calmar)</p>
+                        <p class="metric-value" id="ind-karma-strategy">--</p>
+                    </div>
+                </div>
+
+                <div class="indicator-column benchmark-column benchmark-item">
+                    <h3>基准表现</h3>
+                    <div class="indicator-card">
+                        <p class="metric-title">区间收益率</p>
+                        <p class="metric-value benchmark-color" id="ind-return-benchmark">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">年化收益率</p>
+                        <p class="metric-value benchmark-color" id="ind-annual-return-benchmark">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">年化波动率</p>
+                        <p class="metric-value benchmark-color" id="ind-annual-vol-benchmark">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">最大回撤</p>
+                        <p class="metric-value drawdown-color" id="ind-mdd-benchmark">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">夏普比率 (Sharpe)</p>
+                        <p class="metric-value" id="ind-sharpe-benchmark">--</p>
+                    </div>
+                    <div class="indicator-card">
+                        <p class="metric-title">卡玛比率 (Calmar)</p>
+                        <p class="metric-value" id="ind-karma-benchmark">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 无 benchmark：2×3 大卡片 -->
+            <div class="indicators-grid-solo" style="display: none;">
+                <div class="solo-metric-card">
+                    <p class="solo-label">区间收益率</p>
+                    <p class="solo-value strategy-color" id="solo-return">--</p>
+                </div>
+                <div class="solo-metric-card">
+                    <p class="solo-label">年化收益率</p>
+                    <p class="solo-value strategy-color" id="solo-annual-return">--</p>
+                </div>
+                <div class="solo-metric-card">
+                    <p class="solo-label">年化波动率</p>
+                    <p class="solo-value strategy-color" id="solo-annual-vol">--</p>
+                </div>
+                <div class="solo-metric-card">
+                    <p class="solo-label">最大回撤</p>
+                    <p class="solo-value drawdown-color" id="solo-mdd">--</p>
+                </div>
+                <div class="solo-metric-card">
+                    <p class="solo-label">夏普比率</p>
+                    <p class="solo-value" id="solo-sharpe">--</p>
+                </div>
+                <div class="solo-metric-card">
+                    <p class="solo-label">卡玛比率</p>
+                    <p class="solo-value" id="solo-karma">--</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    window.reportData = {
+        version: "1.0",
+        chartConfig: {"animation": true, "animationThreshold": 2000, "animationDuration": 1000, "animationEasing": "cubicOut", "animationDelay": 0, "animationDurationUpdate": 300, "animationEasingUpdate": "cubicOut", "animationDelayUpdate": 0, "aria": {"enabled": false}, "series": [{"type": "line", "name": "\u7b56\u7565\u6536\u76ca", "connectNulls": false, "xAxisIndex": 0, "yAxisIndex": 0, "symbolSize": 4, "showSymbol": false, "smooth": false, "clip": true, "step": false, "data": [["2023-09-08", 0.0], ["2023-09-15", 0.01], ["2023-09-22", 0.01], ["2023-09-28", 1.59], ["2023-10-13", 2.13], ["2023-10-20", -2.34], ["2023-10-27", 1.7], ["2023-11-03", 3.38], ["2023-11-10", 6.62], ["2023-11-17", 10.39], ["2023-11-24", 9.8], ["2023-12-01", 10.94], ["2023-12-08", 8.85], ["2023-12-15", 9.5], ["2023-12-22", 6.33], ["2023-12-29", 9.66], ["2024-01-05", 6.99], ["2024-01-12", 5.69], ["2024-01-19", 0.68], ["2024-01-26", 0.05], ["2024-02-02", -15.23], ["2024-02-08", -16.56], ["2024-02-23", -5.66], ["2024-03-01", -1.39], ["2024-03-08", 0.43], ["2024-03-15", 5.77], ["2024-03-22", 8.91], ["2024-03-29", 7.22], ["2024-04-03", 8.2], ["2024-04-12", 5.28], ["2024-04-19", 0.8], ["2024-04-26", 5.29], ["2024-04-30", 7.6], ["2024-05-10", 9.44], ["2024-05-17", 9.73], ["2024-05-24", 6.85], ["2024-05-31", 7.75], ["2024-06-07", 1.43], ["2024-06-14", 4.04], ["2024-06-21", 2.78], ["2024-06-28", 1.32], ["2024-07-05", -0.05], ["2024-07-12", 1.75], ["2024-07-19", -0.56], ["2024-07-26", -0.78], ["2024-08-02", 3.1], ["2024-08-09", 1.84], ["2024-08-16", 2.67], ["2024-08-23", -1.44], ["2024-08-30", 2.41], ["2024-09-06", 0.7], ["2024-09-13", -0.75], ["2024-09-20", 1.15], ["2024-09-27", 14.6], ["2024-09-30", 26.9], ["2024-10-11", 22.75], ["2024-10-18", 31.25], ["2024-10-25", 39.79], ["2024-11-01", 40.09], ["2024-11-08", 53.81], ["2024-11-15", 49.38], ["2024-11-22", 50.28], ["2024-11-29", 57.21], ["2024-12-06", 63.71], ["2024-12-13", 68.12], ["2024-12-20", 64.21], ["2024-12-27", 59.44], ["2025-01-03", 45.41], ["2025-01-10", 46.17], ["2025-01-17", 54.7], ["2025-01-24", 57.07], ["2025-01-27", 54.69], ["2025-02-07", 63.56], ["2025-02-14", 67.25], ["2025-02-21", 75.25], ["2025-02-28", 71.57], ["2025-03-07", 79.21], ["2025-03-14", 82.43], ["2025-03-21", 81.17], ["2025-03-28", 75.55], ["2025-04-03", 74.39], ["2025-04-11", 64.76], ["2025-04-18", 66.61], ["2025-04-25", 71.6], ["2025-04-30", 73.35], ["2025-05-09", 79.47], ["2025-05-16", 81.53], ["2025-05-23", 79.41], ["2025-05-30", 81.79], ["2025-06-06", 86.28], ["2025-06-13", 85.51], ["2025-06-20", 82.26], ["2025-06-27", 92.52], ["2025-07-04", 94.15], ["2025-07-11", 98.86], ["2025-07-18", 102.53], ["2025-07-25", 106.48], ["2025-08-01", 106.96], ["2025-08-08", 114.33], ["2025-08-15", 120.96], ["2025-08-22", 128.23], ["2025-08-29", 127.55], ["2025-09-05", 124.64], ["2025-09-12", 130.1], ["2025-09-19", 130.86], ["2025-09-26", 127.4], ["2025-09-30", 130.06], ["2025-10-10", 129.94], ["2025-10-17", 121.51], ["2025-10-24", 129.73], ["2025-10-31", 131.97], ["2025-11-07", 134.54], ["2025-11-14", 137.05], ["2025-11-28", 133.96], ["2025-12-05", 135.09], ["2025-12-12", 135.83], ["2025-12-19", 137.12]], "hoverAnimation": true, "label": {"show": true, "margin": 8}, "logBase": 10, "seriesLayoutBy": "column", "lineStyle": {"show": true, "width": 2, "opacity": 1, "curveness": 0, "type": "solid", "color": "#d9534f"}, "areaStyle": {"opacity": 0}, "zlevel": 0, "z": 0}, {"type": "line", "name": "\u7b56\u7565\u56de\u64a4", "connectNulls": false, "xAxisIndex": 1, "yAxisIndex": 1, "symbolSize": 4, "showSymbol": false, "smooth": false, "clip": true, "step": false, "data": [["2023-09-08", 0.0], ["2023-09-15", 0.0], ["2023-09-22", 0.0], ["2023-09-28", 0.0], ["2023-10-13", 0.0], ["2023-10-20", -4.38], ["2023-10-27", -0.42], ["2023-11-03", 0.0], ["2023-11-10", 0.0], ["2023-11-17", 0.0], ["2023-11-24", -0.53], ["2023-12-01", 0.0], ["2023-12-08", -1.88], ["2023-12-15", -1.3], ["2023-12-22", -4.16], ["2023-12-29", -1.15], ["2024-01-05", -3.56], ["2024-01-12", -4.73], ["2024-01-19", -9.25], ["2024-01-26", -9.82], ["2024-02-02", -23.59], ["2024-02-08", -24.79], ["2024-02-23", -14.96], ["2024-03-01", -11.11], ["2024-03-08", -9.47], ["2024-03-15", -4.66], ["2024-03-22", -1.83], ["2024-03-29", -3.35], ["2024-04-03", -2.47], ["2024-04-12", -5.1], ["2024-04-19", -9.14], ["2024-04-26", -5.09], ["2024-04-30", -3.01], ["2024-05-10", -1.35], ["2024-05-17", -1.09], ["2024-05-24", -3.69], ["2024-05-31", -2.88], ["2024-06-07", -8.57], ["2024-06-14", -6.22], ["2024-06-21", -7.35], ["2024-06-28", -8.67], ["2024-07-05", -9.91], ["2024-07-12", -8.28], ["2024-07-19", -10.37], ["2024-07-26", -10.56], ["2024-08-02", -7.07], ["2024-08-09", -8.2], ["2024-08-16", -7.45], ["2024-08-23", -11.16], ["2024-08-30", -7.69], ["2024-09-06", -9.23], ["2024-09-13", -10.54], ["2024-09-20", -8.82], ["2024-09-27", 0.0], ["2024-09-30", 0.0], ["2024-10-11", -3.27], ["2024-10-18", 0.0], ["2024-10-25", 0.0], ["2024-11-01", 0.0], ["2024-11-08", 0.0], ["2024-11-15", -2.89], ["2024-11-22", -2.29], ["2024-11-29", 0.0], ["2024-12-06", 0.0], ["2024-12-13", 0.0], ["2024-12-20", -2.33], ["2024-12-27", -5.16], ["2025-01-03", -13.51], ["2025-01-10", -13.06], ["2025-01-17", -7.98], ["2025-01-24", -6.57], ["2025-01-27", -7.99], ["2025-02-07", -2.71], ["2025-02-14", -0.52], ["2025-02-21", 0.0], ["2025-02-28", -2.1], ["2025-03-07", 0.0], ["2025-03-14", 0.0], ["2025-03-21", -0.69], ["2025-03-28", -3.77], ["2025-04-03", -4.41], ["2025-04-11", -9.68], ["2025-04-18", -8.67], ["2025-04-25", -5.94], ["2025-04-30", -4.98], ["2025-05-09", -1.62], ["2025-05-16", -0.49], ["2025-05-23", -1.66], ["2025-05-30", -0.35], ["2025-06-06", 0.0], ["2025-06-13", -0.41], ["2025-06-20", -2.16], ["2025-06-27", 0.0], ["2025-07-04", 0.0], ["2025-07-11", 0.0], ["2025-07-18", 0.0], ["2025-07-25", 0.0], ["2025-08-01", 0.0], ["2025-08-08", 0.0], ["2025-08-15", 0.0], ["2025-08-22", 0.0], ["2025-08-29", -0.3], ["2025-09-05", -1.57], ["2025-09-12", 0.0], ["2025-09-19", 0.0], ["2025-09-26", -1.5], ["2025-09-30", -0.35], ["2025-10-10", -0.4], ["2025-10-17", -4.05], ["2025-10-24", -0.49], ["2025-10-31", 0.0], ["2025-11-07", 0.0], ["2025-11-14", 0.0], ["2025-11-28", -1.3], ["2025-12-05", -0.83], ["2025-12-12", -0.51], ["2025-12-19", 0.0]], "hoverAnimation": true, "label": {"show": true, "margin": 8}, "logBase": 10, "seriesLayoutBy": "column", "lineStyle": {"show": true, "width": 1, "opacity": 1, "curveness": 0, "type": "solid", "color": "#d9534f"}, "areaStyle": {"opacity": 0.5, "color": "#d9534f"}, "zlevel": 0, "z": 0}], "legend": [{"data": ["\u7b56\u7565\u6536\u76ca"], "selected": {}, "show": true, "left": "66%", "top": "8%", "padding": 5, "itemGap": 10, "itemWidth": 25, "itemHeight": 14, "backgroundColor": "transparent", "borderColor": "#ccc", "borderWidth": 1, "borderRadius": 0, "pageButtonItemGap": 5, "pageButtonPosition": "end", "pageFormatter": "{current}/{total}", "pageIconColor": "#2f4554", "pageIconInactiveColor": "#aaa", "pageIconSize": 15, "animationDurationUpdate": 800, "selector": false, "selectorPosition": "auto", "selectorItemGap": 7, "selectorButtonGap": 10}, {"data": ["\u7b56\u7565\u56de\u64a4"], "selected": {}, "show": true, "left": "66%", "top": "66%", "padding": 5, "itemGap": 10, "itemWidth": 25, "itemHeight": 14, "backgroundColor": "transparent", "borderColor": "#ccc", "borderWidth": 1, "borderRadius": 0, "pageButtonItemGap": 5, "pageButtonPosition": "end", "pageFormatter": "{current}/{total}", "pageIconColor": "#2f4554", "pageIconInactiveColor": "#aaa", "pageIconSize": 15, "animationDurationUpdate": 800, "selector": false, "selectorPosition": "auto", "selectorItemGap": 7, "selectorButtonGap": 10}], "tooltip": {"show": true, "trigger": "axis", "triggerOn": "mousemove|click", "axisPointer": {"type": "cross"}, "showContent": true, "alwaysShowContent": false, "showDelay": 0, "hideDelay": 100, "enterable": false, "confine": false, "appendToBody": false, "transitionDuration": 0.4, "textStyle": {"fontSize": 14}, "borderWidth": 0, "padding": 5, "order": "seriesAsc"}, "xAxis": [{"type": "category", "show": true, "scale": false, "nameLocation": "end", "nameGap": 15, "gridIndex": 0, "inverse": false, "offset": 0, "splitNumber": 5, "boundaryGap": false, "minInterval": 0, "splitLine": {"show": true, "lineStyle": {"show": true, "width": 1, "opacity": 1, "curveness": 0, "type": "solid"}}, "data": ["2023-09-08", "2023-09-15", "2023-09-22", "2023-09-28", "2023-10-13", "2023-10-20", "2023-10-27", "2023-11-03", "2023-11-10", "2023-11-17", "2023-11-24", "2023-12-01", "2023-12-08", "2023-12-15", "2023-12-22", "2023-12-29", "2024-01-05", "2024-01-12", "2024-01-19", "2024-01-26", "2024-02-02", "2024-02-08", "2024-02-23", "2024-03-01", "2024-03-08", "2024-03-15", "2024-03-22", "2024-03-29", "2024-04-03", "2024-04-12", "2024-04-19", "2024-04-26", "2024-04-30", "2024-05-10", "2024-05-17", "2024-05-24", "2024-05-31", "2024-06-07", "2024-06-14", "2024-06-21", "2024-06-28", "2024-07-05", "2024-07-12", "2024-07-19", "2024-07-26", "2024-08-02", "2024-08-09", "2024-08-16", "2024-08-23", "2024-08-30", "2024-09-06", "2024-09-13", "2024-09-20", "2024-09-27", "2024-09-30", "2024-10-11", "2024-10-18", "2024-10-25", "2024-11-01", "2024-11-08", "2024-11-15", "2024-11-22", "2024-11-29", "2024-12-06", "2024-12-13", "2024-12-20", "2024-12-27", "2025-01-03", "2025-01-10", "2025-01-17", "2025-01-24", "2025-01-27", "2025-02-07", "2025-02-14", "2025-02-21", "2025-02-28", "2025-03-07", "2025-03-14", "2025-03-21", "2025-03-28", "2025-04-03", "2025-04-11", "2025-04-18", "2025-04-25", "2025-04-30", "2025-05-09", "2025-05-16", "2025-05-23", "2025-05-30", "2025-06-06", "2025-06-13", "2025-06-20", "2025-06-27", "2025-07-04", "2025-07-11", "2025-07-18", "2025-07-25", "2025-08-01", "2025-08-08", "2025-08-15", "2025-08-22", "2025-08-29", "2025-09-05", "2025-09-12", "2025-09-19", "2025-09-26", "2025-09-30", "2025-10-10", "2025-10-17", "2025-10-24", "2025-10-31", "2025-11-07", "2025-11-14", "2025-11-28", "2025-12-05", "2025-12-12", "2025-12-19"]}, {"show": false, "scale": false, "nameLocation": "end", "nameGap": 15, "gridIndex": 1, "inverse": false, "offset": 0, "splitNumber": 5, "minInterval": 0, "splitLine": {"show": true, "lineStyle": {"show": true, "width": 1, "opacity": 1, "curveness": 0, "type": "solid"}}, "data": ["2023-09-08", "2023-09-15", "2023-09-22", "2023-09-28", "2023-10-13", "2023-10-20", "2023-10-27", "2023-11-03", "2023-11-10", "2023-11-17", "2023-11-24", "2023-12-01", "2023-12-08", "2023-12-15", "2023-12-22", "2023-12-29", "2024-01-05", "2024-01-12", "2024-01-19", "2024-01-26", "2024-02-02", "2024-02-08", "2024-02-23", "2024-03-01", "2024-03-08", "2024-03-15", "2024-03-22", "2024-03-29", "2024-04-03", "2024-04-12", "2024-04-19", "2024-04-26", "2024-04-30", "2024-05-10", "2024-05-17", "2024-05-24", "2024-05-31", "2024-06-07", "2024-06-14", "2024-06-21", "2024-06-28", "2024-07-05", "2024-07-12", "2024-07-19", "2024-07-26", "2024-08-02", "2024-08-09", "2024-08-16", "2024-08-23", "2024-08-30", "2024-09-06", "2024-09-13", "2024-09-20", "2024-09-27", "2024-09-30", "2024-10-11", "2024-10-18", "2024-10-25", "2024-11-01", "2024-11-08", "2024-11-15", "2024-11-22", "2024-11-29", "2024-12-06", "2024-12-13", "2024-12-20", "2024-12-27", "2025-01-03", "2025-01-10", "2025-01-17", "2025-01-24", "2025-01-27", "2025-02-07", "2025-02-14", "2025-02-21", "2025-02-28", "2025-03-07", "2025-03-14", "2025-03-21", "2025-03-28", "2025-04-03", "2025-04-11", "2025-04-18", "2025-04-25", "2025-04-30", "2025-05-09", "2025-05-16", "2025-05-23", "2025-05-30", "2025-06-06", "2025-06-13", "2025-06-20", "2025-06-27", "2025-07-04", "2025-07-11", "2025-07-18", "2025-07-25", "2025-08-01", "2025-08-08", "2025-08-15", "2025-08-22", "2025-08-29", "2025-09-05", "2025-09-12", "2025-09-19", "2025-09-26", "2025-09-30", "2025-10-10", "2025-10-17", "2025-10-24", "2025-10-31", "2025-11-07", "2025-11-14", "2025-11-28", "2025-12-05", "2025-12-12", "2025-12-19"]}], "yAxis": [{"name": "\u6536\u76ca\u7387 (%)", "show": true, "scale": false, "nameLocation": "end", "nameGap": 15, "gridIndex": 0, "axisLabel": {"show": true, "margin": 8, "formatter": "{value} %"}, "inverse": false, "offset": 0, "splitNumber": 5, "minInterval": 0, "splitLine": {"show": true, "lineStyle": {"show": true, "width": 1, "opacity": 1, "curveness": 0, "type": "solid"}}}, {"name": "\u56de\u64a4 (%)", "show": true, "scale": false, "nameLocation": "end", "nameGap": 15, "gridIndex": 1, "axisLabel": {"show": true, "margin": 8, "formatter": "{value} %"}, "inverse": false, "offset": 0, "splitNumber": 5, "minInterval": 0, "splitLine": {"show": true, "lineStyle": {"show": true, "width": 1, "opacity": 1, "curveness": 0, "type": "solid"}}}], "title": [{"show": true, "text": "\u6536\u76ca\u56de\u64a4\u8d70\u52bf", "target": "blank", "subtarget": "blank", "left": "center", "padding": 5, "itemGap": 10, "textAlign": "auto", "textVerticalAlign": "auto", "triggerEvent": false, "textStyle": {"color": "#333", "fontWeight": "bold", "fontSize": 20}}, {"show": true, "target": "blank", "subtarget": "blank", "padding": 5, "itemGap": 10, "textAlign": "auto", "textVerticalAlign": "auto", "triggerEvent": false}], "toolbox": {"show": true, "orient": "horizontal", "itemSize": 15, "itemGap": 10, "left": "right", "feature": {"saveAsImage": {"type": "png", "name": "performance_report_chart", "backgroundColor": "white", "connectedBackgroundColor": "#fff", "show": true, "title": "\u4fdd\u5b58\u4e3a\u56fe\u7247", "pixelRatio": 4}, "restore": true, "dataView": false, "dataZoom": {"show": true, "title": {"zoom": "\u533a\u57df\u7f29\u653e", "back": "\u533a\u57df\u7f29\u653e\u8fd8\u539f"}, "icon": {}, "filterMode": "filter"}, "magicType": false, "brush": false}}, "dataZoom": [{"show": true, "type": "inside", "showDetail": true, "showDataShadow": true, "realtime": true, "start": 0, "end": 100, "orient": "horizontal", "xAxisIndex": [0, 1], "zoomLock": false, "filterMode": "filter"}], "axisPointer": {"show": true, "type": "line", "link": [{"xAxisIndex": "all"}], "triggerTooltip": true, "triggerOn": "mousemove|click"}, "grid": [{"show": false, "zlevel": 0, "z": 2, "top": "12%", "bottom": "38%", "containLabel": false, "backgroundColor": "transparent", "borderColor": "#ccc", "borderWidth": 1, "shadowOffsetX": 0, "shadowOffsetY": 0}, {"show": false, "zlevel": 0, "z": 2, "top": "70%", "bottom": "10%", "containLabel": false, "backgroundColor": "transparent", "borderColor": "#ccc", "borderWidth": 1, "shadowOffsetX": 0, "shadowOffsetY": 0}]},
+        allData: {"interval": {"start_date": "2023-09-08", "end_date": "2025-12-19", "interval_return": 1.3711628837116288, "interval_anual_return": 0.4598183134384688, "interval_annual_vol": 0.2698716598753386, "interval_MDD": -0.2478593961243803, "interval_sharpe": 1.6297313828418787, "interval_karma": 1.8551578863999318}, "recent_week": {"start_date": "2025-12-12", "end_date": "2025-12-19", "interval_return": 0.005469578121687579, "interval_anual_return": null, "interval_annual_vol": null, "interval_MDD": null, "interval_sharpe": null, "interval_karma": null}, "recent_month": {"start_date": "2025-11-21", "end_date": "2025-12-19", "interval_return": null, "interval_anual_return": null, "interval_annual_vol": null, "interval_MDD": null, "interval_sharpe": null, "interval_karma": null}, "ytd": {"start_date": "2025-01-03", "end_date": "2025-12-19", "interval_return": 0.6307247971393206, "interval_anual_return": 0.6652625071498481, "interval_annual_vol": 0.17200498243549256, "interval_MDD": -0.09684845163058385, "interval_sharpe": 3.751417534616141, "interval_karma": 6.869108343491207}, "recent_year": {"start_date": "2024-12-20", "end_date": "2025-12-19", "interval_return": 0.4439505571454667, "interval_anual_return": 0.445408662625318, "interval_annual_vol": 0.20123836585580596, "interval_MDD": -0.11453449430676499, "interval_sharpe": 2.113954070418846, "interval_karma": 3.888860428652627}, "y2024": {"start_date": "2023-12-29", "end_date": "2024-12-27", "interval_return": 0.45399835871250116, "interval_anual_return": 0.45549433839681797, "interval_annual_vol": 0.3504552926930448, "interval_MDD": -0.2390808790006383, "interval_sharpe": 1.242653050123163, "interval_karma": 1.9051893246368812}, "y2023": {"start_date": "2022-12-30", "end_date": "2023-12-29", "interval_return": null, "interval_anual_return": null, "interval_annual_vol": null, "interval_MDD": null, "interval_sharpe": null, "interval_karma": null}, "y2022": {"start_date": "2021-12-31", "end_date": "2022-12-30", "interval_return": null, "interval_anual_return": null, "interval_annual_vol": null, "interval_MDD": null, "interval_sharpe": null, "interval_karma": null}},
+        hasBenchmark: false
+    };
+    </script>
+    <script src="./assets/js/main.js"></script>
+</body>
+
+</html>

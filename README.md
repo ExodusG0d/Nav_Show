@@ -1,57 +1,111 @@
+# Nav_Show
 
+基金业绩报告生成器 - 纯渲染层 submodule
 
-# Nav_Show 业绩报告说明
+## 功能
 
-快速使用：
+接收已计算好的净值数据和指标，生成响应式 HTML 业绩报告。支持有/无基准两种模式。
 
-将`performance_data.csv`放置在项目根目录下，然后运行`performance_report.py`生成业绩报告。
+## 安装
 
-要求的performance_data.csv格式如下：
-
-```csv
-Date,Strategy_Value,Benchmark_Value
-2023-01-01,1.0,1.0
-2023-01-02,1.01,1.002
-2023-01-03,1.02,1.004
-```
-
-没有benchmark列时，基准恒定为1。
-
-## 报告内容一览
-
-![](images/readme_1.png)
-
-![](images/readme_2.png)
-
-本项目自动生成的业绩报告（index.html）主要包含以下内容：
-
-- **多周期收益摘要卡片**：展示当日、近一周、近一月、近三月、今年以来、成立以来的策略收益、基准收益、超额收益。
-- **收益与回撤可视化**：包含策略累计收益、基准累计收益、超额收益曲线，以及策略回撤与超额回撤的双轴图。
-- **核心业绩指标**（分三大板块）：
-  1. **核心表现**：总收益率、年化收益率、年化波动率、最大回撤（策略与基准均有）。
-  2. **风险调整后收益**：夏普比率、索提诺比率、Calmar比率、信息比率等，均采用**三个月期SHIBOR均值**作为无风险利率。
-  3. **相对基准分析**：年化Alpha、Beta、跟踪误差、超额收益最大回撤等。
-
-## 指标计算注意事项
-
-- **无风险利率**：所有涉及夏普、索提诺等风险调整收益指标，均采用报告期内**三个月期SHIBOR均值**，并自动匹配区间。
-- **年化处理**：所有年化指标均基于252个交易日，且考虑中国法定节假日（通过`Chinese_special_holiday.txt`）。
-- **波动率/跟踪误差**：均为年化标准差，自动调整实际交易日间隔。
-- **最大回撤**：取绝对值展示，便于直观理解。
-- **超额收益**：既有算术超额（策略-基准），也有几何超额（复利差异）。
-- **信息比率**：用年化Alpha/跟踪误差衡量主动管理能力。
-- **数据完整性**：如区间数据不足，所有指标自动返回0，保证前端展示稳定。
-
-## 依赖环境
-
-- Python 3.7 及以上
-- 主要依赖：pandas、numpy、pyecharts、akshare
-
-安装依赖：
 ```bash
-pip install pandas numpy pyecharts akshare
+pip install pyecharts
 ```
 
-## 许可证
+## 使用
 
-MIT License
+```python
+from nav_show import render_report, ChartData
+
+render_report(
+    name="产品名称",
+    chart_data=ChartData(
+        dates=["2023-01-01", "2023-01-08", ...],  # ISO 日期字符串
+        nav=[0.0, 1.2, 2.5, ...],                  # 归一化收益率（%）
+        drawdown=[0.0, -0.5, -1.2, ...],           # 回撤（%）
+        benchmark=[0.0, 0.8, 1.5, ...],            # 基准收益（可选）
+        excess_nav=[0.0, 0.4, 1.0, ...],           # 超额收益（可选）
+        drawdown_excess=[0.0, -0.2, -0.5, ...],    # 超额回撤（可选）
+    ),
+    metrics={
+        "interval": {
+            "start_date": "2023-01-01",
+            "end_date": "2025-12-31",
+            "interval_return": 1.37,
+            "interval_anual_return": 0.46,
+            "interval_annual_vol": 0.27,
+            "interval_MDD": -0.25,
+            "interval_sharpe": 1.63,
+            "interval_karma": 1.86,
+        },
+        "ytd": {...},
+        "recent_year": {...},
+        # 有基准时需要 _Benchmark 和 _Excess 后缀的对应数据
+    },
+    output_html="report.html",
+    has_benchmark=False,
+)
+```
+
+## 数据格式
+
+### ChartData
+
+- `dates`: 日期列表（ISO 格式字符串）
+- `nav`: 策略净值（归一化后的百分比，如 `[0.0, 1.2, 2.5]` 表示 0%, 1.2%, 2.5%）
+- `drawdown`: 策略回撤（百分比）
+- `benchmark`: 基准净值（可选，无基准时传空列表）
+- `excess_nav`: 超额净值（可选）
+- `drawdown_excess`: 超额回撤（可选）
+
+### metrics
+
+每个周期的指标字典，必须包含：
+- `start_date`, `end_date`: 日期字符串
+- `interval_return`: 区间收益率（小数，如 `0.37` 表示 37%）
+- `interval_anual_return`: 年化收益率
+- `interval_annual_vol`: 年化波动率
+- `interval_MDD`: 最大回撤
+- `interval_sharpe`: 夏普比率
+- `interval_karma`: 卡玛比率
+
+支持的周期：`interval`, `ytd`, `recent_year`, `recent_month`, `recent_week`, `y2024`, `y2023`, `y2022`
+
+有基准时，每个周期需要三份数据：
+- `{period}`: 策略
+- `{period}_Benchmark`: 基准
+- `{period}_Excess`: 超额
+
+## 特性
+
+- 📱 响应式设计，支持桌面/平板/手机
+- 📊 ECharts 交互式图表，支持缩放、保存
+- 🎨 无基准时自动切换为 2×3 大卡片布局
+- 🔄 周期切换（今年以来/近一年/成立以来）
+- 📦 零依赖（除 pyecharts），纯静态 HTML 输出
+
+## 项目结构
+
+```
+Nav_Show/
+├── __init__.py              # 公开接口
+├── performance_report.py    # 核心渲染逻辑
+├── templates/
+│   └── report.html          # HTML 模板
+├── assets/
+│   ├── css/style.css        # 样式
+│   └── js/main.js           # 前端逻辑
+└── test_data.json           # 测试数据（供 UI 调试）
+```
+
+## 测试
+
+```bash
+python performance_report.py
+```
+
+生成 `index_with_benchmark.html` 和 `index_no_benchmark.html` 两个示例报告。
+
+## License
+
+MIT

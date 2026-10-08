@@ -205,3 +205,22 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+.history
+Chinese_special_holiday copy.txt
+.claude
+
+# ---------------------------------------------------------------------------
+# 净值 / 业绩数据文件（本地数据，不纳入版本管理）
+# 如需提交某个数据文件，用 `git add -f <file>` 或在此文件末尾加 `!<file>` 例外
+# ---------------------------------------------------------------------------
+*.csv
+*.xls
+*.xlsx
+*.xlsm
+*.parquet
+*.feather
+*.pkl
+data/
+
+# nav_interval_metric：上游已从本项目移除（见 CLAUDE.md），本地仍供 legacy_code.py 使用
+/nav_interval_metric/
